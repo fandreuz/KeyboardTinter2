@@ -1,0 +1,3 @@
+-keep public class ohi.andre.keyboardtinter2.hookers.aosp.* { public *; }
+-keep public class ohi.andre.keyboardtinter2.hookers.* { public *; }
+-keep public class ohi.andre.keyboardtinter2.KeyboardTinterModule

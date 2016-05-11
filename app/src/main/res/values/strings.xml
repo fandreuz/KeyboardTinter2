@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">KT2</string>
+    <string name="xposed_description">Simple module that colors the keys of your keyboard while typing!</string>
+
+    <string name="addcolor_label">Add Color</string>
+
+    <string name="reboot_toast">Reboot to see the changes</string>
+    <string name="cantadd_color_toast">Can\'t add or remove colors here. Switch to the custom preset</string>
+
+    <string name="colordialog_title">Choose a color</string>
+
+    <string name="about_developer_dialog_title">About Developer</string>
+    <string name="about_developer_dialog_text">Francesco Andreuzzi
+        \nfranzbianconero@gmail.com
+        \nTrieste (Italy)
+        \n
+        \nafollestad/material-dialogs
+        \nlzyzsd/AndroidRandomColor</string>
+
+    <string name="sendemail_title">Send me an email</string>
+    <string name="blockactivity_title">Hide the activity</string>
+    <string name="restoreactivity_title">Restore the activity</string>
+    <string name="addrandomcolor_title">Add a random color</string>
+    <string name="about_developer_title">About Developer</string>
+    <string name="presets_title">Presets</string>
+
+    <string-array name="presets">
+        <item>Material Light</item>
+        <item>Material Dark</item>
+        <item>Shiny</item>
+        <item>Custom</item>
+    </string-array>
+
+</resources>

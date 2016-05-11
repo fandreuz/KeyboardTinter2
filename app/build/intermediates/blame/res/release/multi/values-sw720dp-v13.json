@@ -1,0 +1,26 @@
+[
+    {
+        "outputFile": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/res/merged/release/values-sw720dp-v13/values-sw720dp-v13.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 41,
+                    "endOffset": 92
+                },
+                "from": {
+                    "file": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/exploded-aar/com.afollestad.material-dialogs/core/0.8.4.2/res/values-sw720dp/values-sw720dp.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 160,
+                        "endColumn": 41,
+                        "endOffset": 197
+                    }
+                }
+            }
+        ]
+    }
+]

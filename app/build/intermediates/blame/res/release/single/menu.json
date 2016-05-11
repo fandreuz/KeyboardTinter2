@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/res/merged/release/menu/main_inactive.xml",
+        "source": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/src/main/res/menu/main_inactive.xml"
+    },
+    {
+        "merged": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/res/merged/release/menu/menu_active.xml",
+        "source": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/src/main/res/menu/menu_active.xml"
+    }
+]
