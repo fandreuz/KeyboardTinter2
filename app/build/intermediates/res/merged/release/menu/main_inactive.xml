@@ -2,29 +2,34 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:icon="@drawable/ic_email_white_24dp"
+    <item
         android:id="@+id/send_email_id"
+        android:icon="@drawable/ic_email_white_24dp"
         android:title="@string/sendemail_title"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 
-    <item android:icon="@drawable/ic_check_white_24dp"
+    <item
         android:id="@+id/restore_activity_id"
+        android:icon="@drawable/ic_check_white_24dp"
         android:title="@string/restoreactivity_title"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 
-    <item android:icon="@drawable/ic_add_white_24dp"
+    <item
         android:id="@+id/add_random_color_id"
+        android:icon="@drawable/ic_add_white_24dp"
         android:title="@string/addrandomcolor_title"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 
-    <item android:icon="@drawable/ic_info_white_24dp"
+    <item
         android:id="@+id/about_developer_id"
+        android:icon="@drawable/ic_info_white_24dp"
         android:title="@string/about_developer_title"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 
-    <item android:icon="@drawable/ic_list_white_24dp"
+    <item
         android:id="@+id/presets_id"
+        android:icon="@drawable/ic_list_white_24dp"
         android:title="@string/presets_title"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 
 </menu>

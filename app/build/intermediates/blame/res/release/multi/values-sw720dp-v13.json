@@ -11,13 +11,13 @@
                     "endOffset": 92
                 },
                 "from": {
-                    "file": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/exploded-aar/com.afollestad.material-dialogs/core/0.8.4.2/res/values-sw720dp/values-sw720dp.xml",
+                    "file": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/exploded-aar/com.afollestad.material-dialogs/core/0.8.5.8/res/values-sw720dp-v13/values-sw720dp-v13.xml",
                     "position": {
-                        "startLine": 4,
+                        "startLine": 2,
                         "startColumn": 4,
-                        "startOffset": 160,
+                        "startOffset": 55,
                         "endColumn": 41,
-                        "endOffset": 197
+                        "endOffset": 92
                     }
                 }
             }

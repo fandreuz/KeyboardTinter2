@@ -1,14 +1,14 @@
 [
     {
         "merged": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/res/merged/release/layout-v14/md_stub_progress_indeterminate.xml",
-        "source": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/exploded-aar/com.afollestad.material-dialogs/core/0.8.4.2/res/layout-v14/md_stub_progress_indeterminate.xml"
+        "source": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/exploded-aar/com.afollestad.material-dialogs/core/0.8.5.8/res/layout-v14/md_stub_progress_indeterminate.xml"
     },
     {
         "merged": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/res/merged/release/layout-v14/md_stub_progress_indeterminate_horizontal.xml",
-        "source": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/exploded-aar/com.afollestad.material-dialogs/core/0.8.4.2/res/layout-v14/md_stub_progress_indeterminate_horizontal.xml"
+        "source": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/exploded-aar/com.afollestad.material-dialogs/core/0.8.5.8/res/layout-v14/md_stub_progress_indeterminate_horizontal.xml"
     },
     {
         "merged": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/res/merged/release/layout-v14/md_stub_progress.xml",
-        "source": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/exploded-aar/com.afollestad.material-dialogs/core/0.8.4.2/res/layout-v14/md_stub_progress.xml"
+        "source": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/exploded-aar/com.afollestad.material-dialogs/core/0.8.5.8/res/layout-v14/md_stub_progress.xml"
     }
 ]

@@ -11,13 +11,13 @@
                     "endOffset": 105
                 },
                 "from": {
-                    "file": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.1.1/res/values-w500dp/values-w500dp.xml",
+                    "file": "/Users/francescoandreuzzi/Programming/Android/KeyboardTinter2_playstore/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.3.0/res/values-w500dp-v13/values-w500dp-v13.xml",
                     "position": {
-                        "startLine": 4,
+                        "startLine": 2,
                         "startColumn": 4,
-                        "startOffset": 232,
+                        "startOffset": 55,
                         "endColumn": 54,
-                        "endOffset": 282
+                        "endOffset": 105
                     }
                 }
             }
