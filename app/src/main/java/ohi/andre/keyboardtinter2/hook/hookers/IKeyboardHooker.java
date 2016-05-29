@@ -11,6 +11,7 @@ import de.robv.android.xposed.XposedHelpers;
 import ohi.andre.keyboardtinter2.hook.Hooker;
 import ohi.andre.keyboardtinter2.utils.ColorProvider;
 import ohi.andre.keyboardtinter2.utils.Utils;
+import ohi.andre.reflectionutils.ReflectionUtils;
 
 /**
  * Created by andre on 15/11/15.
@@ -49,8 +50,8 @@ public class IKeyboardHooker implements Hooker {
                     XposedHelpers.setAdditionalInstanceField(param.thisObject, NATIVEBG_FIELD,
                             XposedHelpers.getObjectField(param.thisObject, BG_FIELD));
 
-                int[] state = (int[]) XposedHelpers.callMethod(param.args[0], gs.getName());
-                if (Utils.containsInt(state, android.R.attr.state_pressed))
+                Integer[] state = Utils.toIntegerArray((int[]) XposedHelpers.callMethod(param.args[0], gs.getName()));
+                if (ReflectionUtils.arrayContains(state, android.R.attr.state_pressed))
                     XposedHelpers.setObjectField(param.thisObject, BG_FIELD, ColorProvider.getRandomColorDrawable());
             }
 

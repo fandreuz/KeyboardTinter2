@@ -7,6 +7,7 @@ import de.robv.android.xposed.XposedHelpers;
 import ohi.andre.keyboardtinter2.hook.Hooker;
 import ohi.andre.keyboardtinter2.utils.ColorProvider;
 import ohi.andre.keyboardtinter2.utils.Utils;
+import ohi.andre.reflectionutils.ReflectionUtils;
 
 /**
  * Created by andre on 11/11/15.
@@ -37,9 +38,10 @@ public class BlackberryHooker implements Hooker {
                 super.beforeHookedMethod(param);
 
                 Object obj = o[XposedHelpers.getIntField(param.thisObject, B_FIELD)];
-                int[] state = (int[]) XposedHelpers.callMethod(obj, A_METHOD, XposedHelpers.getBooleanField(param.thisObject, Q_FIELD));
+                Integer[] state = Utils.toIntegerArray((int[]) XposedHelpers.callMethod(obj, A_METHOD,
+                        XposedHelpers.getBooleanField(param.thisObject, Q_FIELD)));
 
-                if (!Utils.containsInt(state, android.R.attr.state_pressed))
+                if (!ReflectionUtils.arrayContains(state, android.R.attr.state_pressed))
                     return;
 
                 param.args[0] = ColorProvider.getRandomColorDrawable();

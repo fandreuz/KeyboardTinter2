@@ -24,7 +24,7 @@ public class KeyboardTinterModule implements IXposedHookLoadPackage {
         if (hooker == null)
             return;
 
-        XposedBridge.log("Hooker: " + hooker.getClass().toString());
+        XposedBridge.log("KT2 for " + lpparam.packageName + " : " + hooker.getClass().getName());
 
         if (Utils.listContainsObject(alreadyHooked, hooker)) {
             return;

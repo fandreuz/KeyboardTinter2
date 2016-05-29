@@ -5,8 +5,11 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -18,14 +21,25 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import ohi.andre.keyboardtinter2.R;
 import ohi.andre.keyboardtinter2.utils.ColorAdapter;
 import ohi.andre.keyboardtinter2.utils.ColorSet;
 import ohi.andre.keyboardtinter2.utils.ColorStorage;
+import ohi.andre.keyboardtinter2.utils.Keyboards;
 import ohi.andre.keyboardtinter2.utils.RandomColor;
+import ohi.andre.keyboardtinter2.utils.Utils;
+import ohi.andre.reflectionutils.ReflectionUtils;
 
 public class MainActivity extends AppCompatActivity implements OnClickListener, OnItemClickListener, ColorChooserDialog.ColorCallback {
 
@@ -33,15 +47,23 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     public static final String color_key = "color";
     public static final String color_n_key = "color_n";
     public static final String preset_key = "preset";
+
     public static final int MATERIAL_LIGHT = 0;
     public static final int MATERIAL_DARK = 1;
-    //    }
     public static final int SHINY = 2;
     public static final int CUSTOM = 3;
+
+    public static final int XPOSED_LOG = 0;
+    public static final int ANDROID_LOG = 1;
+    public static final int SUPPORTED_KEYBOARDS = 2;
+
     private final String show_activity = "show_activity";
-    private final String email = "franzbianconero@gmail.com";
-    private final String subject = "KT2 request";
-    //    {
+
+    private final String email = "andreuzzi.francesco@gmail.com";
+    private final String object = "KT2 request";
+
+    private final String APP_FOLDER = "KT2";
+
     private SharedPreferences prefs;
     private ListView lv;
     private ColorAdapter adapter;
@@ -121,13 +143,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             return;
         }
 
-        if (dialog == null)
+        if (dialog == null) {
             dialog = new ColorChooserDialog.Builder(this, R.string.colordialog_title)
                     .accentMode(true)
                     .titleSub(R.string.colordialog_title)
                     .show();
-        else
+        } else {
             dialog.show(this);
+        }
     }
 
     private int selectMenu() {
@@ -135,13 +158,95 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }
 
     private void sendEmail() {
-        Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+        requestAttachments();
+    }
 
-        emailIntent.setType("plain/text");
-        emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{email});
-        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
+    private void requestAttachments() {
+        final MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title(R.string.sendattachment_title)
+                .items(R.array.attachment_types)
+                .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
+                        return true;
+                    }
+                })
+                .positiveText(android.R.string.ok)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        manageAttachmentRequest(dialog.getSelectedIndices());
+                    }
+                })
+                .build();
 
-        startActivity(Intent.createChooser(emailIntent, getString(R.string.sendemail_title)));
+        ListView view = dialog.getListView();
+        view.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        for(int count = 0; count < view.getChildCount(); count++) {
+            view.setItemChecked(count, true);
+        }
+
+        dialog.show();
+    }
+
+    private void manageAttachmentRequest(Integer[] selected) {
+        List<File> attachments = new ArrayList<>();
+
+        File kt2Folder = new File(Environment.getExternalStorageDirectory(), APP_FOLDER);
+        if (!kt2Folder.exists() && !kt2Folder.mkdir()) {
+            return;
+        }
+
+        if(ReflectionUtils.arrayContains(selected, XPOSED_LOG)) {
+            new File(kt2Folder, "error.log").delete();
+
+            try {
+                Runtime.getRuntime().exec("cp /data/data/de.robv.android.xposed.installer/log/error.log " +
+                        kt2Folder.getAbsolutePath());
+            } catch (IOException e) {}
+
+            File logFile = new File(kt2Folder, "error.log");
+            attachments.add(logFile);
+        }
+        if(ReflectionUtils.arrayContains(selected, ANDROID_LOG)) {
+            File logFile = Utils.getAndroidLog(kt2Folder);
+            attachments.add(logFile);
+        }
+        if(ReflectionUtils.arrayContains(selected, SUPPORTED_KEYBOARDS)) {
+            Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            PackageManager mgr = getPackageManager();
+            List<ApplicationInfo> pkgAppsList = mgr.getInstalledApplications(PackageManager.GET_META_DATA);
+            List<ApplicationInfo> keyboards = new ArrayList<>();
+            for (ApplicationInfo app: pkgAppsList) {
+                String packageName = app.packageName;
+                if(Keyboards.isSupported(packageName)) {
+                    keyboards.add(app);
+                }
+            }
+            File keyboardsFile = new File(kt2Folder, "keyboards.log");
+            try {
+                FileWriter writer = new FileWriter(keyboardsFile);
+                String separator = " - ";
+                String newLine = "\n";
+                for (ApplicationInfo info : keyboards) {
+                    String label = info.loadLabel(mgr).toString();
+                    String packageName = info.packageName;
+                    PackageInfo pckgInfo = mgr.getPackageInfo(packageName, 0);
+                    String versionCode = String.valueOf(pckgInfo.versionCode);
+                    String versionName = pckgInfo.versionName;
+                    writer.write(packageName + separator + label + separator + versionCode + separator + versionName + newLine);
+                }
+                writer.close();
+                attachments.add(keyboardsFile);
+            }
+            catch (FileNotFoundException e) {}
+            catch (IOException e) {}
+            catch (PackageManager.NameNotFoundException e) {}
+        }
+
+        MainActivity.this.startActivity(Intent.createChooser(Utils.getEmailIntent(email, object,
+                attachments.toArray(new File[attachments.size()])), getString(R.string.sendemail_title)));
     }
 
     private void aboutDeveloper() {

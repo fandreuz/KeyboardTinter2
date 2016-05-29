@@ -13,13 +13,14 @@
 
     <string name="about_developer_dialog_title">About Developer</string>
     <string name="about_developer_dialog_text">Francesco Andreuzzi
-        \nfranzbianconero@gmail.com
+        \nandreuzzi.francesco@gmail.com
         \nTrieste (Italy)
         \n
         \nafollestad/material-dialogs
         \nlzyzsd/AndroidRandomColor</string>
 
     <string name="sendemail_title">Send me an email</string>
+    <string name="sendattachment_title">Attachments</string>
     <string name="blockactivity_title">Hide the activity</string>
     <string name="restoreactivity_title">Restore the activity</string>
     <string name="addrandomcolor_title">Add a random color</string>
@@ -31,6 +32,12 @@
         <item>Material Dark</item>
         <item>Shiny</item>
         <item>Custom</item>
+    </string-array>
+
+    <string-array name="attachment_types">
+        <item>Xposed Log</item>
+        <item>Android Log</item>
+        <item>Installed supported keyboards</item>
     </string-array>
 
 </resources>

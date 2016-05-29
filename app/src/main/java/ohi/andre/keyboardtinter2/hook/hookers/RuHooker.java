@@ -7,6 +7,7 @@ import de.robv.android.xposed.XposedHelpers;
 import ohi.andre.keyboardtinter2.hook.Hooker;
 import ohi.andre.keyboardtinter2.utils.ColorProvider;
 import ohi.andre.keyboardtinter2.utils.Utils;
+import ohi.andre.reflectionutils.ReflectionUtils;
 
 /**
  * Created by francescoandreuzzi on 22/01/16.
@@ -40,8 +41,8 @@ public class RuHooker implements Hooker {
                 if (key == null)
                     return;
 
-                int[] state = (int[]) XposedHelpers.callMethod(key, STATE_METHOD);
-                if (!Utils.containsInt(state, android.R.attr.state_pressed))
+                Integer[] state = Utils.toIntegerArray((int[]) XposedHelpers.callMethod(key, STATE_METHOD));
+                if (!ReflectionUtils.arrayContains(state, android.R.attr.state_pressed))
                     return;
 
                 XposedHelpers.setObjectField(param.thisObject, KEYBG_FIELD, ColorProvider.getRandomColorDrawable());

@@ -10,6 +10,7 @@ import de.robv.android.xposed.XposedHelpers;
 import ohi.andre.keyboardtinter2.hook.Hooker;
 import ohi.andre.keyboardtinter2.utils.ColorProvider;
 import ohi.andre.keyboardtinter2.utils.Utils;
+import ohi.andre.reflectionutils.ReflectionUtils;
 
 /**
  * Created by francescoandreuzzi on 04/02/16.
@@ -41,13 +42,13 @@ public class LgHooker implements Hooker {
 
                 boolean isSpecialKey = XposedHelpers.getBooleanField(k, SPECIALKEY_FIELD);
 
-                int[] drawableState;
+                Integer[] drawableState;
                 try {
-                    drawableState = (int[]) XposedHelpers.callMethod(k, DRAWABLESTATE_METHODNAME);
+                    drawableState = Utils.toIntegerArray((int[]) XposedHelpers.callMethod(k, DRAWABLESTATE_METHODNAME));
                 } catch (Exception | Error e) {
                     return;
                 }
-                boolean pressed = Utils.containsInt(drawableState, android.R.attr.state_pressed);
+                boolean pressed = ReflectionUtils.arrayContains(drawableState, android.R.attr.state_pressed);
 
                 if (isSpecialKey || pressed)
                     param.setResult(ColorProvider.getRandomColorDrawable());

@@ -2,6 +2,11 @@ package ohi.andre.keyboardtinter2.utils;
 
 import android.os.Build;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+
 import ohi.andre.keyboardtinter2.hook.Hooker;
 import ohi.andre.keyboardtinter2.hook.hookers.AiHooker;
 import ohi.andre.keyboardtinter2.hook.hookers.AsusHooker;
@@ -26,6 +31,8 @@ import ohi.andre.keyboardtinter2.hook.hookers.aosp.API21;
 import ohi.andre.keyboardtinter2.hook.hookers.aosp.API23;
 
 public class Keyboards {
+
+    private static Map<String, Class<? extends Hooker>> keyboards = new HashMap<>();
 
     private static final String GOOGLE_KEYBOARD = "com.google.android.inputmethod.latin";
     private static final String AOSP_KEYBOARD = "com.android.inputmethod.latin";
@@ -52,64 +59,63 @@ public class Keyboards {
     private static final String INDIC_KEYBAORD = "com.google.android.apps.inputmethod.hindi";
     private static final String PINYIN_KEYBOARD = "com.google.android.inputmethod.pinyin";
 
-    public static Hooker getHooker(String name) {
-        int vrs = Build.VERSION.SDK_INT;
-        if (name.equals(GOOGLE_KEYBOARD)) {
-            if (vrs >= Build.VERSION_CODES.M)
-                return new API23();
-            else
-                return new API21();
-        }
-        if (name.equals(AOSP_KEYBOARD)) {
-            if (vrs >= Build.VERSION_CODES.M)
-                return new API23();
-            if (vrs >= Build.VERSION_CODES.LOLLIPOP)
-                return new API21();
-            if (vrs >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-                return new API17();
-            if (vrs >= Build.VERSION_CODES.JELLY_BEAN)
-                return new API16();
-            if (vrs >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-                return new API14();
-        }
-        if (name.equals(SWIFTKEY_KEYBOARD) || name.equals(SWIFTKEY_NEURAL_KEYBOARD) || name.equals(SWIFTKEY_BETA_KEYBOARD))
-            return new SwiftKeyHooker();
-        if (name.equals(HACKERS_KEYBOARD))
-            return new HackersHooker();
-        if (name.equals(SMART_KEYBOARD_PRO))
-            return new SmartKeyboardHooker();
-        if (name.equals(XPERIA_KEYBOARD))
-            return new XperiaHooker();
-        if (name.equals(TOUCHPALEMOJI_KEYBOARD) || name.equals(TOUCHPAL_KEYBOARD))
-            return new TouchpalHooker();
-        if (name.equals(BLACKBERRY_KEYBOARD))
-            return new BlackberryHooker();
-        if (name.equals(IKEYBOARD))
-            return new IKeyboardHooker();
-        if (name.equals(SWIPE_KEYBOARD))
-            return new SwipeHooker();
-        if (name.equals(GO_KEYBOARD))
-            return new GoHooker();
-        if (name.equals(DODOL_KEYBOARD))
-            return new DodolHooker();
-        if (name.equals(RU_KEYBOARD))
-            return new RuHooker();
-        if (name.equals(ASUS_KEYBOARD))
-            return new AsusHooker();
-        if (name.equals(HTC_KEYBOARD))
-            return new HTCHooker();
-        if (name.equals(CHROOMA_KEYBOARD))
-            return new ChroomaHooker();
-        if (name.equals(AITYPE_KEYBOARD))
-            return new AiHooker();
-        if (name.equals(LG_KEYBOARD))
-            return new LgHooker();
-        if (name.equals(INDIC_KEYBAORD))
-            return new API23();
-        if (name.equals(PINYIN_KEYBOARD))
-            return new API23();
+    static {
+        keyboards.put(SWIFTKEY_BETA_KEYBOARD, SwiftKeyHooker.class);
+        keyboards.put(SWIFTKEY_KEYBOARD, SwiftKeyHooker.class);
+        keyboards.put(SWIFTKEY_NEURAL_KEYBOARD, SwiftKeyHooker.class);
+        keyboards.put(HACKERS_KEYBOARD, HackersHooker.class);
+        keyboards.put(SMART_KEYBOARD_PRO, SmartKeyboardHooker.class);
+        keyboards.put(XPERIA_KEYBOARD, XperiaHooker.class);
+        keyboards.put(TOUCHPALEMOJI_KEYBOARD, TouchpalHooker.class);
+        keyboards.put(TOUCHPAL_KEYBOARD, TouchpalHooker.class);
+        keyboards.put(BLACKBERRY_KEYBOARD, BlackberryHooker.class);
+        keyboards.put(IKEYBOARD, IKeyboardHooker.class);
+        keyboards.put(SWIPE_KEYBOARD, SwipeHooker.class);
+        keyboards.put(GO_KEYBOARD, GoHooker.class);
+        keyboards.put(DODOL_KEYBOARD, DodolHooker.class);
+        keyboards.put(RU_KEYBOARD, RuHooker.class);
+        keyboards.put(ASUS_KEYBOARD, AsusHooker.class);
+        keyboards.put(HTC_KEYBOARD, HTCHooker.class);
+        keyboards.put(CHROOMA_KEYBOARD, ChroomaHooker.class);
+        keyboards.put(AITYPE_KEYBOARD, AiHooker.class);
+        keyboards.put(LG_KEYBOARD, LgHooker.class);
+        keyboards.put(PINYIN_KEYBOARD, API23.class);
+        keyboards.put(INDIC_KEYBAORD, API23.class);
 
-        return null;
+        int vrs = Build.VERSION.SDK_INT;
+        keyboards.put(GOOGLE_KEYBOARD, vrs >= Build.VERSION_CODES.JELLY_BEAN_MR1 ? API23.class : API21.class);
+        if (vrs >= Build.VERSION_CODES.M) {
+            keyboards.put(AOSP_KEYBOARD, API23.class);
+        } else if (vrs >= Build.VERSION_CODES.LOLLIPOP) {
+            keyboards.put(AOSP_KEYBOARD, API21.class);
+        } else if (vrs >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            keyboards.put(AOSP_KEYBOARD, API17.class);
+        } else if (vrs >= Build.VERSION_CODES.JELLY_BEAN) {
+            keyboards.put(AOSP_KEYBOARD, API16.class);
+        } else if (vrs >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            keyboards.put(AOSP_KEYBOARD, API14.class);
+        }
+    }
+
+    public static Hooker getHooker(String name) {
+        try {
+            Constructor<? extends Hooker> constructor = keyboards.get(name).getConstructor();
+            return constructor.newInstance();
+        } catch (NoSuchMethodException e) {
+            return null;
+        } catch (IllegalAccessException e) {
+            return null;
+        } catch (InstantiationException e) {
+            return null;
+        } catch (InvocationTargetException e) {
+            return null;
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
+    public static boolean isSupported(String name) {
+        return keyboards.containsKey(name);
     }
 
 }

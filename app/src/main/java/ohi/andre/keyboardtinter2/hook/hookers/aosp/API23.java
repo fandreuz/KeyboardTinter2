@@ -47,8 +47,7 @@ public class API23 implements Hooker {
 
                         try {
                             sleep(100);
-                        } catch (InterruptedException e) {
-                        }
+                        } catch (InterruptedException e) {}
 
                         handler.post(new Runnable() {
                             @Override

@@ -1,70 +1,93 @@
 package ohi.andre.keyboardtinter2.utils;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+import android.net.Uri;
 import android.view.View;
 
-import java.lang.reflect.Field;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-
-import de.robv.android.xposed.XposedBridge;
 
 /**
  * Created by andre on 25/10/15.
  */
 public class Utils {
 
-    public static boolean containsInt(int[] array, int i) {
-        if (array == null)
-            return false;
+    private static final String EMAIL_TYPE = "vnd.android.cursor.dir/email";
 
-        for (int n : array)
-            if (n == i)
-                return true;
-        return false;
-    }
+    public static Intent getEmailIntent(String address, String object, File... attachments) {
+        Intent emailIntent;
 
-    public static Field getFieldOfType(Field[] fields, String name, Class<?> type) {
-        Field r = null;
-        for (Field f : fields)
-            if (f.getType().equals(type) && (name == null || f.getName().equals(name)))
-                r = f;
-        if (r != null)
-            r.setAccessible(true);
-        return r;
-    }
+        if(attachments != null && attachments.length > 1) {
+            emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
 
-    public static Field getFieldOfType(Field[] fields, Class<?> type) {
-        return getFieldOfType(fields, null, type);
-    }
+            ArrayList<Uri> uris = new ArrayList<>();
+            for(File f : attachments) {
+                uris.add(Uri.fromFile(f));
+            }
+            emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+        } else {
+            emailIntent = new Intent(Intent.ACTION_SEND);
 
-    public static Method getMethod(Class<?> clazz, Class<?> returnType, Class<?>[] args) {
-        Method[] methods = clazz.getDeclaredMethods();
-
-        MainLoop:
-        for (Method method : methods) {
-            if (method.getReturnType().equals(returnType)) {
-
-                Class<?>[] args2 = method.getParameterTypes();
-                if (args2.length != args.length)
-                    continue;
-
-                for (int count = 0; count < args.length; count++) {
-                    if (!(args[count].equals(args2[count])))
-                        continue MainLoop;
-                }
-
-                return method;
+            if(attachments != null && attachments.length == 1) {
+                emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(attachments[0]));
             }
         }
 
-        return null;
+        emailIntent.setType(EMAIL_TYPE);
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {address});
+
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, object);
+        return emailIntent;
+    }
+
+    public static Integer[] toIntegerArray(int[] array) {
+        Integer[] integers = new Integer[array.length];
+        for(int ctr = 0; ctr < array.length; ctr++) {
+            integers[ctr] = array[ctr];
+        }
+        return integers;
+    }
+
+    public static File getAndroidLog(File storeFolder){
+        File file = new File (storeFolder, "android.log");
+
+        int pid = android.os.Process.myPid();
+        try {
+            String command = "logcat -d -v threadtime *:*";
+            Process process = Runtime.getRuntime().exec(command);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder result = new StringBuilder();
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null) {
+                if (currentLine.contains(String.valueOf(pid))) {
+                    result.append(currentLine);
+                    result.append("\n");
+                }
+            }
+
+            FileWriter out = new FileWriter(file);
+            out.write(result.toString());
+            out.close();
+
+            Runtime.getRuntime().exec("logcat -c");
+
+        } catch (IOException e) {}
+
+        return file;
     }
 
     public static Bitmap drawableToBitmap(Drawable drawable) {
@@ -87,112 +110,6 @@ public class Utils {
                 return true;
         }
         return false;
-    }
-
-    public static void setAllTo(Object value, Object o, Class<?> toSet) {
-        Class<?> clazz = o.getClass();
-        List<Field> fields = Arrays.asList(clazz.getDeclaredFields());
-
-        for (int count = 0; count < fields.size(); count++) {
-            Field field = fields.get(count);
-            if (field.getType().equals(toSet)) {
-                XposedBridge.log("setted " + field.getName() + " to " + value.toString());
-                field.setAccessible(true);
-                try {
-                    field.set(o, value);
-                } catch (IllegalAccessException e) {
-                }
-            }
-        }
-    }
-
-    public static void printStackTrace(StackTraceElement[] elements) {
-        XposedBridge.log("--- start");
-
-        String last = null;
-        boolean lastWasTabbed = false;
-        for (StackTraceElement element : elements) {
-            if (last == null) {
-                XposedBridge.log(element.toString());
-                last = element.toString();
-                continue;
-            }
-
-            String current = element.toString();
-
-            int currentFirstPoint = current.indexOf(".");
-            String after = current.substring(currentFirstPoint + 1);
-            int currentSecondPoint = after.indexOf(".");
-            if (currentSecondPoint == -1)
-                currentSecondPoint = currentFirstPoint;
-
-            int lastFirstPoint = last.indexOf(".");
-            after = last.substring(lastFirstPoint + 1);
-            int lastSecondPoint = after.indexOf(".");
-            if (lastSecondPoint == -1)
-                lastSecondPoint = lastFirstPoint;
-
-            if (current.substring(0, currentSecondPoint).equals(last.substring(0, lastSecondPoint))) {
-                if (lastWasTabbed)
-                    XposedBridge.log("    " + current);
-                else
-                    XposedBridge.log(current);
-            } else {
-                if (lastWasTabbed) {
-                    XposedBridge.log(current);
-                    lastWasTabbed = false;
-                } else {
-                    XposedBridge.log("    " + current);
-                    lastWasTabbed = true;
-                }
-            }
-
-            last = current;
-        }
-
-        XposedBridge.log("--- end");
-        XposedBridge.log("\n");
-    }
-
-    public static void printDeclaredMethods(Class<?> c) {
-        printDeclaredMethods(c, null);
-    }
-
-    public static void printDeclaredMethods(Class<?> c, Class<?> returnType) {
-        XposedBridge.log("--- methods of " + c.getName());
-
-        for (Method method : c.getDeclaredMethods()) {
-            if (returnType == null || returnType.equals(method.getReturnType()))
-                XposedBridge.log(method.getReturnType() + " " + method.getName() + "(" + Arrays.toString(method.getParameterTypes()) + ")");
-        }
-
-        XposedBridge.log("--- end");
-        XposedBridge.log("\n");
-    }
-
-    public static void printDeclaredFields(Object o) {
-        printDeclaredFields(o, null);
-    }
-
-    public static void printDeclaredFields(Object o, Class<?> type) {
-        Class<?> c = o.getClass();
-        XposedBridge.log("--- fields of " + c.getName());
-
-        for (Field field : c.getDeclaredFields()) {
-            field.setAccessible(true);
-
-            if (type == null || type.equals(field.getType())) {
-                try {
-                    XposedBridge.log(field.getType().getName() + " " + field.getName() + " = " + field.get(o).toString());
-                } catch (IllegalAccessException e) {
-                } catch (NullPointerException e) {
-                    XposedBridge.log(field.getType().getName() + " " + field.getName() + " = null");
-                }
-            }
-        }
-
-        XposedBridge.log("--- end");
-        XposedBridge.log("\n");
     }
 
     public static Drawable getDrawableForState(StateListDrawable drawable, int[] state) {

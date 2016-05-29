@@ -5,6 +5,7 @@ import de.robv.android.xposed.XposedHelpers;
 import ohi.andre.keyboardtinter2.hook.Hooker;
 import ohi.andre.keyboardtinter2.utils.ColorProvider;
 import ohi.andre.keyboardtinter2.utils.Utils;
+import ohi.andre.reflectionutils.ReflectionUtils;
 
 /**
  * Created by andre on 25/10/15.
@@ -42,8 +43,8 @@ public class SmartKeyboardHooker implements Hooker {
                     XposedHelpers.setAdditionalInstanceField(param.thisObject, NATIVEFCTBG_FIELD,
                             XposedHelpers.getObjectField(param.thisObject, FCTKEYBG_FIELD));
 
-                int[] state = key == null ? null : (int[]) XposedHelpers.callMethod(key, KEYSTATE_METHOD);
-                if (key == null || !Utils.containsInt(state, android.R.attr.state_pressed))
+                Integer[] state = key == null ? null : Utils.toIntegerArray((int[]) XposedHelpers.callMethod(key, KEYSTATE_METHOD));
+                if (key == null || !ReflectionUtils.arrayContains(state, android.R.attr.state_pressed))
                     return;
                 XposedHelpers.setObjectField(param.thisObject, NORMALKEYBG_FIELD, ColorProvider.getRandomColorDrawable());
                 XposedHelpers.setObjectField(param.thisObject, FCTKEYBG_FIELD, ColorProvider.getRandomColorDrawable());
